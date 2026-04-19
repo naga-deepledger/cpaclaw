@@ -27,6 +27,7 @@ import {
 } from './container-runtime.js';
 import { OneCLI } from '@onecli-sh/sdk';
 import { validateAdditionalMounts } from './mount-security.js';
+import { readEnvFile } from './env.js';
 import { RegisteredGroup } from './types.js';
 
 const onecli = new OneCLI({ url: ONECLI_URL, apiKey: ONECLI_API_KEY });
@@ -252,6 +253,14 @@ async function buildContainerArgs(
 
   // Pass host timezone so container's local time matches the user's
   args.push('-e', `TZ=${TIMEZONE}`);
+
+  // Inject third-party API tokens from .env into containers
+  const { GITHUB_TOKEN, AGENTMAIL_API_KEY } = readEnvFile([
+    'GITHUB_TOKEN',
+    'AGENTMAIL_API_KEY',
+  ]);
+  if (GITHUB_TOKEN) args.push('-e', `GITHUB_TOKEN=${GITHUB_TOKEN}`);
+  if (AGENTMAIL_API_KEY) args.push('-e', `AGENTMAIL_API_KEY=${AGENTMAIL_API_KEY}`);
 
   // OneCLI gateway handles credential injection — containers never see real secrets.
   // The gateway intercepts HTTPS traffic and injects API keys or OAuth tokens.
