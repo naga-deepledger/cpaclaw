@@ -260,7 +260,8 @@ async function buildContainerArgs(
     'AGENTMAIL_API_KEY',
   ]);
   if (GITHUB_TOKEN) args.push('-e', `GITHUB_TOKEN=${GITHUB_TOKEN}`);
-  if (AGENTMAIL_API_KEY) args.push('-e', `AGENTMAIL_API_KEY=${AGENTMAIL_API_KEY}`);
+  if (AGENTMAIL_API_KEY)
+    args.push('-e', `AGENTMAIL_API_KEY=${AGENTMAIL_API_KEY}`);
 
   // OneCLI gateway handles credential injection — containers never see real secrets.
   // The gateway intercepts HTTPS traffic and injects API keys or OAuth tokens.
